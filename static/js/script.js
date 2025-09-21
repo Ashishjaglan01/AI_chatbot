@@ -9,7 +9,7 @@ function sendMessage() {
     // Clear input
     inputBox.value = "";
 
-    // Mock bot reply (later will be replaced by backend API)
+    // Mock bot reply (later replace kar denge by backend API)
     setTimeout(() => {
         let botReply = "I am still learning! 🤖";
         if (message.toLowerCase().includes("hello")) {
