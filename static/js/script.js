@@ -1,83 +1,50 @@
-// Load sound
-const botSound = new Audio("/static/sounds/pop.wav");
+const inputBox = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+const popSound = new Audio("/static/sounds/pop.wav");
 
-
-function sendMessage() {
-    const inputBox = document.getElementById("user-input");
+async function sendMessage() {
     const message = inputBox.value.trim();
     if (message === "") return;
 
     displayMessage(message, "user-message");
     inputBox.value = "";
+    // popSound.play();
 
-    showTypingIndicator();
+    // Create typing animation
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("message", "bot-message");
+    typingDiv.innerHTML = `
+        <div class="typing">
+            <span></span><span></span><span></span>
+        </div>
+    `;
+    chatBox.appendChild(typingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-    setTimeout(() => {
-        hideTypingIndicator();
+    // Simulate short delay (typing time)
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-        let botReply = "🤖 I’m still learning! Try asking about notes or quizzes.";
-        if (message.toLowerCase().includes("hello")) {
-            botReply = "Hello 👋! I’m your college chatbot assistant. How can I help?";
-        } else if (message.toLowerCase().includes("notes")) {
-            botReply = "📘 You can access your subject notes here soon!";
-        } else if (message.toLowerCase().includes("quiz")) {
-            botReply = "🧠 Quiz feature coming soon!";
-        }
+    try {
+        const response = await fetch("/get", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ msg: message })
+        });
 
-        displayMessage(botReply, "bot-message");
-        botSound.play().catch(error => console.log("Audio play blocked:", error));
-     }, 600);
-}
-
-// Typewriter effect (bot message)
-function typeMessage(text, className) {
-    const chatBox = document.getElementById("chat-box");
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", className);
-    chatBox.appendChild(msgDiv);
-
-    let index = 0;
-    const typingSpeed = 25;
-
-    const typingInterval = setInterval(() => {
-        msgDiv.textContent += text[index];
-        index++;
-        chatBox.scrollTop = chatBox.scrollHeight;
-        if (index >= text.length) {
-            clearInterval(typingInterval);
-        }
-    }, typingSpeed);
+        const data = await response.json();
+        chatBox.removeChild(typingDiv);
+        displayMessage(data.reply, "bot-message");
+        popSound.play();
+    } catch (error) {
+        chatBox.removeChild(typingDiv);
+        displayMessage("⚠️ Error: Couldn't connect to server.", "bot-message");
+    }
 }
 
 function displayMessage(text, className) {
-    const chatBox = document.getElementById("chat-box");
     const msgDiv = document.createElement("div");
     msgDiv.classList.add("message", className);
-    msgDiv.textContent = text;
+    msgDiv.innerText = text;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-//Typing Indicator 
-function showTypingIndicator() {
-    const chatBox = document.getElementById("chat-box");
-    const indicator = document.createElement("div");
-    indicator.classList.add("typing-indicator");
-    indicator.innerHTML = "<span></span><span></span><span></span>";
-    indicator.id = "typing-indicator";
-    chatBox.appendChild(indicator);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function hideTypingIndicator() {
-    const indicator = document.getElementById("typing-indicator");
-    if (indicator) indicator.remove();
-}
-
-// Sound Function 
-function playBotSound() {
-    if (botSound) {
-        botSound.currentTime = 0;
-        botSound.play().catch(() => {}); // ignore autoplay restrictions
-    }
 }
