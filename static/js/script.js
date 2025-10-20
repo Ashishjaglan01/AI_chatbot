@@ -33,7 +33,10 @@ async function sendMessage() {
 
         const data = await response.json();
         chatBox.removeChild(typingDiv);
-        displayMessage(data.reply, "bot-message");
+
+        // ✅ Use innerHTML so links render properly
+        displayMessage(data.reply, "bot-message", true);
+
         popSound.play();
     } catch (error) {
         chatBox.removeChild(typingDiv);
@@ -41,10 +44,17 @@ async function sendMessage() {
     }
 }
 
-function displayMessage(text, className) {
+function displayMessage(text, className, isHTML = false) {
     const msgDiv = document.createElement("div");
     msgDiv.classList.add("message", className);
-    msgDiv.innerText = text;
+
+    // ✅ Allow HTML rendering for bot messages (so <a> links work)
+    if (isHTML) {
+        msgDiv.innerHTML = text;
+    } else {
+        msgDiv.innerText = text;
+    }
+
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
