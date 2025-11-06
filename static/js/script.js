@@ -60,8 +60,7 @@ async function sendMessage() {
 }
 
 /**
- * displayMessage(text, className, isHTML=false)
- * - if isHTML === true uses innerHTML to render links
+ * displayMessage
  */
 function displayMessage(text, className, isHTML = false) {
     const msgDiv = document.createElement("div");
@@ -74,10 +73,7 @@ function displayMessage(text, className, isHTML = false) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* -------- ENTER & SHIFT+ENTER handling for textarea --------
-   - Enter sends (when not Shift)
-   - Shift+Enter inserts newline
-*/
+
 inputBox.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         if (event.shiftKey) {
@@ -100,9 +96,10 @@ inputBox.addEventListener("keydown", function (event) {
     }
 });
 
-/* Optional: make textarea auto-resize as user types (nice polish) */
+/* make textarea auto-resize as user types (nice polish) */
 inputBox.addEventListener("input", function () {
     this.style.height = "auto";
     const max = 140; // px
     this.style.height = Math.min(this.scrollHeight, max) + "px";
 });
+s
