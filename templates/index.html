@@ -8,20 +8,28 @@
 </head>
 <body>
     <div class="chat-wrapper">
+        <!-- Header Section -->
         <header class="chat-header">
-          <h1 class="brand">
-             <span class="learn">Learn</span><span class="mate">Mate</span>
-          </h1>
-          <p class="tagline">Your Smart College Assistant 🤖</p>
+            <h1 class="brand">
+                <span class="learn">Learn</span><span class="mate">Mate</span>
+            </h1>
+            <p class="tagline">Your Smart College Assistant 🤖</p>
         </header>
 
-
+        <!-- Chat Box -->
         <main class="chat-box" id="chat-box">
-            <!-- Chat message -->
+            <!-- Messages appear here dynamically -->
         </main>
 
+        <!-- Chat Input -->
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+            <textarea 
+                id="user-input" 
+                placeholder="Type your message..."
+                rows="1"
+                autocomplete="off"
+                onkeydown="handleKey(event)"
+            ></textarea>
             <button onclick="sendMessage()">➤</button>
         </div>
     </div>

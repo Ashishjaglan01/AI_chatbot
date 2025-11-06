@@ -1,14 +1,24 @@
 const inputBox = document.getElementById("user-input");
 const chatBox = document.getElementById("chat-box");
+const sendBtn = document.getElementById("send-btn");
 const popSound = new Audio("/static/sounds/pop.wav");
 
+// helper: disable/enable input and send button
+function setControlsDisabled(disabled = true) {
+    if (inputBox) inputBox.disabled = disabled;
+    if (sendBtn) sendBtn.disabled = disabled;
+    if (sendBtn) sendBtn.style.opacity = disabled ? "0.6" : "1";
+}
+
 async function sendMessage() {
-    const message = inputBox.value.trim();
+    const message = inputBox.value.replace(/\r/g, "").trim();
     if (message === "") return;
 
     displayMessage(message, "user-message");
     inputBox.value = "";
-    // popSound.play();
+
+    // disable controls while waiting
+    setControlsDisabled(true);
 
     // Create typing animation
     const typingDiv = document.createElement("div");
@@ -22,7 +32,7 @@ async function sendMessage() {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     // Simulate short delay (typing time)
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     try {
         const response = await fetch("/get", {
@@ -34,27 +44,65 @@ async function sendMessage() {
         const data = await response.json();
         chatBox.removeChild(typingDiv);
 
-        // ✅ Use innerHTML so links render properly
+        // Render bot HTML reply (links etc.)
         displayMessage(data.reply, "bot-message", true);
 
-        popSound.play();
+        // Play sound AFTER bot message appears
+        try { popSound.currentTime = 0; await popSound.play(); } catch(e){}
     } catch (error) {
         chatBox.removeChild(typingDiv);
         displayMessage("⚠️ Error: Couldn't connect to server.", "bot-message");
+    } finally {
+        // re-enable controls
+        setControlsDisabled(false);
+        inputBox.focus();
     }
 }
 
+/**
+ * displayMessage(text, className, isHTML=false)
+ * - if isHTML === true uses innerHTML to render links
+ */
 function displayMessage(text, className, isHTML = false) {
     const msgDiv = document.createElement("div");
     msgDiv.classList.add("message", className);
 
-    // ✅ Allow HTML rendering for bot messages (so <a> links work)
-    if (isHTML) {
-        msgDiv.innerHTML = text;
-    } else {
-        msgDiv.innerText = text;
-    }
+    if (isHTML) msgDiv.innerHTML = text;
+    else msgDiv.innerText = text;
 
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+/* -------- ENTER & SHIFT+ENTER handling for textarea --------
+   - Enter sends (when not Shift)
+   - Shift+Enter inserts newline
+*/
+inputBox.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        if (event.shiftKey) {
+            // Insert a newline at caret position
+            const start = inputBox.selectionStart;
+            const end = inputBox.selectionEnd;
+            const value = inputBox.value;
+            inputBox.value = value.slice(0, start) + "\n" + value.slice(end);
+            // move caret to after the newline
+            inputBox.selectionStart = inputBox.selectionEnd = start + 1;
+            // allow default (no prevent) — but prevent to avoid form submit behavior
+            event.preventDefault();
+        } else {
+            // Enter (without shift) => send
+            event.preventDefault();
+            // If controls disabled, ignore
+            if (inputBox.disabled || (sendBtn && sendBtn.disabled)) return;
+            sendMessage();
+        }
+    }
+});
+
+/* Optional: make textarea auto-resize as user types (nice polish) */
+inputBox.addEventListener("input", function () {
+    this.style.height = "auto";
+    const max = 140; // px
+    this.style.height = Math.min(this.scrollHeight, max) + "px";
+});
