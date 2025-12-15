@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>LearnMate AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
 
-<div class="chat-wrapper">
+<div class="page">
 
-  <!-- Header -->
-  <div class="chat-header">
-    <div class="brand">
-      <span class="learn">Learn</span><span class="mate">Mate</span>
+  <div class="chat-container">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="brand">
+        <span class="learn">LEARN</span><span class="mate">MATE</span>
+      </div>
+      <div class="tagline">Your AI-powered study companion</div>
     </div>
-    <div class="tagline">Your AI-powered study companion</div>
-  </div>
 
-  <!-- Chat messages -->
-  <div class="chat-box" id="chatBox"></div>
+    <!-- Chat messages -->
+    <div class="chat-box" id="chatBox"></div>
 
-  <!-- Input (ENTER to send) -->
-  <div class="chat-input">
-    <textarea
-      id="userInput"
-      placeholder="Ask anything…"
-      rows="1"
-    ></textarea>
+    <!-- Input -->
+    <div class="chat-input">
+      <textarea
+        id="userInput"
+        placeholder="Ask anything..."
+        rows="1"
+      ></textarea>
+    </div>
+
   </div>
 
 </div>
