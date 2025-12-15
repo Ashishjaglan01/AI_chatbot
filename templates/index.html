@@ -1,39 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LearnMate | College Helpdesk</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LearnMate | College Helpdesk</title>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <meta name="theme-color" content="#0d1117" />
 </head>
-<body>
-    <div class="chat-wrapper">
-        <!-- Header Section -->
-        <header class="chat-header">
-            <h1 class="brand">
-                <span class="learn">Learn</span><span class="mate">Mate</span>
-            </h1>
-            <p class="tagline">Your Smart College Assistant 🤖</p>
-        </header>
 
-        <!-- Chat Box -->
-        <main class="chat-box" id="chat-box">
-            <!-- Messages appear here dynamically -->
-        </main>
+<body class="dark-theme">
 
-        <!-- Chat Input -->
-        <div class="chat-input">
-            <textarea 
-                id="user-input" 
-                placeholder="Type your message..."
-                rows="1"
-                autocomplete="off"
-                onkeydown="handleKey(event)"
-            ></textarea>
-            <button onclick="sendMessage()">➤</button>
-        </div>
+  <noscript>
+    <div style="background:#ffefc2;padding:8px;text-align:center;color:#333;">
+      JavaScript is required for this app. Please enable JavaScript and reload.
     </div>
+  </noscript>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <!-- ======= PAGE LAYOUT: SIDEBAR + CHAT PANEL ======= -->
+  <div class="layout">
+
+    <!-- ======= SIDEBAR (hidden by default on mobile) ======= -->
+    <aside class="sidebar sidebar-hidden" id="sidebar" aria-label="Chat history sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Chats</h2>
+        <button class="new-chat-btn" onclick="startNewChat()" aria-label="Start new chat">+ New</button>
+      </div>
+
+      <!-- Chat list (populated by script) -->
+      <ul class="chat-list" id="chat-list" role="list" aria-live="polite">
+        <!-- injected -->
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="sidebar-btn" onclick="exportChatToPDF()" aria-label="Export chat to PDF">📄 Export Chat</button>
+        <button class="sidebar-btn" onclick="toggleTheme()" aria-label="Toggle theme">🌙 / ☀️ Theme</button>
+      </div>
+    </aside>
+
+    <!-- Overlay used to close sidebar on mobile -->
+    <div id="overlay" class="overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
+
+    <!-- Mobile toggle -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+
+    <!-- ======= MAIN CHAT PANEL ======= -->
+    <div class="chat-wrapper" role="main">
+
+      <!-- HEADER -->
+      <header class="chat-header">
+        <div class="header-left">
+          <h1 class="brand" aria-hidden="true"><span class="learn">Learn</span><span class="mate">Mate</span></h1>
+          <p class="tagline">Your Smart College Assistant 🤖</p>
+        </div>
+
+        <!-- Editable chat title -->
+        <div class="chat-title-edit" aria-label="Chat title editor">
+          <input
+            type="text"
+            id="edit-chat-title"
+            placeholder="Untitled Chat"
+            onblur="saveChatTitle()"
+            aria-label="Edit chat title"
+          />
+        </div>
+      </header>
+
+      <!-- MESSAGES -->
+      <main class="chat-box" id="chat-box" tabindex="0" aria-live="polite" role="log">
+        <!-- messages injected here -->
+      </main>
+
+      <!-- INPUT -->
+      <div class="chat-input" role="form" aria-label="Message composer">
+        <textarea
+          id="user-input"
+          placeholder="Type your message..."
+          rows="1"
+          autocomplete="off"
+          aria-label="Message input"
+        ></textarea>
+
+        <button id="send-btn" onclick="sendMessage()" aria-label="Send message">➤</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Load script after DOM (defer ensures element queries work) -->
+  <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
