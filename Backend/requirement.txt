@@ -1,5 +1,20 @@
-flask
+# ---------------- Core Backend ----------------
+Flask
 flask-cors
-pymongo
 python-dotenv
+
+# ---------------- Database ----------------
+pymongo
+
+# ---------------- OpenAI (New SDK) ----------------
 openai
+
+# ---------------- PDF Processing ----------------
+pypdf
+
+# ---------------- Vector Search (RAG) ----------------
+faiss-cpu
+numpy
+
+# ---------------- Utilities ----------------
+requests

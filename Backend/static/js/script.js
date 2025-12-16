@@ -1,19 +1,18 @@
 // ---------------- DOM ELEMENTS ----------------
 const chatBox = document.getElementById("chatBox");
 const userInput = document.getElementById("userInput");
-const pdfInput = document.getElementById("pdfUpload");
 
 // ---------------- CONFIG ----------------
-const API_ASK = "/api/ask";
-const API_UPLOAD = "/api/upload";
+// IMPORTANT: use RELATIVE URL (frontend is served by Flask)
+const API_URL = "/api/ask";
 
-// Pop sound (correct path)
-const popSound = new Audio("/static/sounds/pop.wav");
+// Pop sound
+const popSound = new Audio("../sounds/pop.wav");
 
 // ---------------- UTILS ----------------
 function playPop() {
   popSound.currentTime = 0;
-  popSound.play().catch(() => {});
+  popSound.play().catch(() => {}); // ignore autoplay issues
 }
 
 function scrollToBottom() {
@@ -30,7 +29,7 @@ function addMessage(text, sender) {
     msg.textContent = text;
   } else {
     msg.classList.add("bot-message");
-    msg.innerHTML = text; // allow HTML (quiz formatting)
+    msg.innerHTML = text; // allow links & formatting
   }
 
   chatBox.appendChild(msg);
@@ -57,19 +56,24 @@ async function sendMessage() {
   const message = userInput.value.trim();
   if (!message) return;
 
+  // User message
   playPop();
   addMessage(message, "user");
   userInput.value = "";
-  userInput.style.height = "auto";
 
+  // Bot typing
   showTyping();
 
   try {
-    const response = await fetch(API_ASK, {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: message })
     });
+
+    if (!response.ok) {
+      throw new Error("Server error");
+    }
 
     const data = await response.json();
 
@@ -80,37 +84,6 @@ async function sendMessage() {
   } catch (error) {
     removeTyping();
     addMessage("⚠️ Unable to connect to server.", "bot");
-  }
-}
-
-// ---------------- PDF UPLOAD ----------------
-async function uploadPDF() {
-  if (!pdfInput.files.length) {
-    alert("Please select a PDF file first");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("pdf", pdfInput.files[0]);
-
-  addMessage(`📄 Uploading PDF: ${pdfInput.files[0].name}`, "user");
-  showTyping();
-
-  try {
-    const response = await fetch(API_UPLOAD, {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await response.json();
-
-    removeTyping();
-    playPop();
-    addMessage(`✅ ${data.message}`, "bot");
-
-  } catch (error) {
-    removeTyping();
-    addMessage("❌ PDF upload failed.", "bot");
   }
 }
 

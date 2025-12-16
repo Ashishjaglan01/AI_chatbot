@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Node / frontend (if any)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Python / Flask
+# ===============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.env
+.env.*
+venv/
+.venv/
+env/
+ENV/
+
+# ===============================
+# Flask / Runtime
+# ===============================
+instance/
+*.sqlite3
+*.db
+
+# ===============================
+# Chat App Specific
+# ===============================
+chat_history.db
+exports/
+static/uploads/
+
+# ===============================
+# Node / Frontend (if ever added)
+# ===============================
+node_modules/
+dist/
+build/
+
+# ===============================
+# OS Files
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# IDE / Editor
+# ===============================
+.vscode/
+.idea/
+*.swp
+*.swo
+.env
